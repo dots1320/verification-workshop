@@ -5,7 +5,8 @@ public class BinarySearch {
     //@ requires 0 <= lo && lo <= hi;
     //@ ensures lo <= \result && \result <= hi;
     static /*@ pure @*/ int midpoint(int lo, int hi) {
-        return (lo + hi) / 2;
+        // Original implementation: return (lo + hi) / 2; // lo + hi can overflow.
+        return lo + (hi - lo) / 2;
     }
 
     //@ requires (\forall int i, j; 0 <= i && i < j && j < a.length; a[i] <= a[j]);

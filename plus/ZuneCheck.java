@@ -13,10 +13,14 @@ public class ZuneCheck {
         assert Zune.ORIGIN_YEAR <= year && year < Zune.ORIGIN_YEAR + 30;
     }
 
-    // TODO (2): the right year: days falls after all the days of the years before
+    // The right year: days falls after all the days of the years before
     // `year`, and no later than the last day of `year`.
     public static void yearOfIsRight(int days) {
-        assert false;   // remove this line
+        CProver.assume(1 <= days && days <= MAX_DAYS);
+        int year = Zune.yearOf(days);
+        int before = daysBefore(year);
+        int length = Zune.isLeapYear(year) ? 366 : 365;
+        assert before < days && days <= before + length;
     }
 
     // The number of days from January 1, 1980 to the end of the year before `year`.

@@ -16,7 +16,10 @@ public class CompositeCheck {
         while (CProver.nondetBoolean()) {
             Composite p = nodes[anyIndex()];
             Composite c = nodes[anyIndex()];
-            CProver.assume(c != p && c.parent == null && c.firstChild == null);   // addChild's precondition
+            CProver.assume(c != p && c.parent == null);
+            for (Composite ancestor = p; ancestor != null; ancestor = ancestor.parent) {
+                CProver.assume(ancestor != c);       // addChild must not create a cycle
+            }
             p.addChild(c);
             for (Composite n : nodes) {
                 checkInvariant(n);
@@ -32,11 +35,29 @@ public class CompositeCheck {
 
     // The class invariant of Composite, from the comments on its fields.
     static void checkInvariant(Composite n) {
+        // A tree of NODES nodes must reach its root within NODES parent links.
+        Composite ancestor = n;
+        for (int depth = 0; depth < NODES && ancestor != null; depth++) {
+            ancestor = ancestor.parent;
+        }
+        assert ancestor == null;                   // catches cycles explicitly
+
+        int maximum = n.initValue;
+        boolean hasMaxChild = false;
         for (Composite c = n.firstChild; c != null; c = c.nextSibling) {
             assert c.parent == n;                  // each child points back to its parent
+            if (c.value > maximum) {
+                maximum = c.value;
+            }
+            if (c == n.maxChild) {
+                hasMaxChild = true;
+            }
         }
-        // TODO (1): value is the maximum of initValue and the children's values;
-        // maxChild is null exactly when value == initValue, and otherwise it is
-        // one of the children and its value is value.
+        assert n.value == maximum;
+        assert (n.maxChild == null) == (n.value == n.initValue);
+        if (n.maxChild != null) {
+            assert hasMaxChild;
+            assert n.maxChild.value == n.value;
+        }
     }
 }
