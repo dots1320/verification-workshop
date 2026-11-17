@@ -3,6 +3,7 @@
 public class Absolute {
 
     // Returns the absolute value of n.
+
     //@ requires n > Integer.MIN_VALUE;
     //@ ensures \result >= 0;
     //@ ensures \result == n || \result == -n;

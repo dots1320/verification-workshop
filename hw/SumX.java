@@ -6,12 +6,14 @@ public class SumX {
     //@ ensures \result == x * (x + 1) / 2;
     public static int sum(int x) {
         int s = 0, i = 0;
-        //@ loop_invariant 0 <= i && i <= x && s == i * (i + 1) / 2;
+        //@ loop_invariant 0 <= i && i <= x;
+        //@ loop_invariant s == i * (i + 1) / 2;
         //@ decreases x - i;
         while (i < x) {
             i = i + 1;
             s = s + i;
         }
+        //@ assert s == x * (x + 1) / 2;
         return s;
     }
 }
